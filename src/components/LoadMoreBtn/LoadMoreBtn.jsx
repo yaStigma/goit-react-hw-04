@@ -1,5 +1,7 @@
-export default function LoadMoreBtn() {
+import css from "./LoadMoreBtn.module.css";
+
+export default function LoadMoreBtn({ onSubmit }) {
     return (
-        <button type="submit">Load More</button>
+        <button className={css.btn} onClick={onSubmit} type="submit">Load More</button>
     )
 };

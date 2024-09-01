@@ -1,5 +1,5 @@
 export default function ErrorMassage() {
     return(
-    <p>Error. Please wait</p>
+    <p style={{textAlign: "center"}}>Error. Please wait</p>
 )
 };
