@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // import css from './App.module.css'
 import SearchBar from "../SearchBar/SearchBar"
@@ -14,29 +14,37 @@ export default function App() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [page, setPage] = useState(0);
+  const [query, setQuery] = useState('');
+  const [page, setPage] = useState(1);
 
   const handleSubmit = (e, input) => {
     e.preventDefault();
     if (!input) {
       toast("Please enter your search");
+      return;
     }
-    setLoading(true);
-    fetchSearchedImages(input);
-  };
+    setQuery(input);
+    setPage(1);
+    setImages([]);
+      };
 
-  const fetchSearchedImages = async(input) => {
+  const fetchSearchedImages = async(query, page) => {
     try {
-      setPage(page + 1);
-      const { data } = await axios.get(`https://api.unsplash.com/search/photos?page=${page}&query=${input}`, {
+      setLoading(true);
+      setError(false);
+      const { data } = await axios.get(`https://api.unsplash.com/search/photos`, {
+        params: {
+          page: page,
+          query: query,
+          per_page: 12, 
+        },
         headers: {
           Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
           "Accept-Version": "v1"
         }
       })
-      console.log(page);
       console.log(data);
-      setImages(data);
+      setImages(prevImages => [...prevImages, ...data.results]);
     } catch(err) {
       console.log(err);
       setError(true);
@@ -45,12 +53,24 @@ export default function App() {
     }
   };
 
+  const handleLoadMore = () => {
+    setPage(prevPage => prevPage + 1);
+  };
+
+  useEffect(() => {
+    if (query) {
+      fetchSearchedImages(query, page);
+    }
+  }, [page, query]);
+
    return(
     <>
-      <SearchBar onSubmit={handleSubmit}/>
-      {loading ? <Loader/> : error ? <ErrorMassage/> :<ImageGallery images={images}/>}
-      {images.results?.length > 0 && <LoadMoreBtn onSubmit={handleSubmit}/>}
-      <ImageModal/>
+     <SearchBar onSubmit={handleSubmit} />
+      {loading && <Loader />}
+      {error && <ErrorMassage />}
+      <ImageGallery images={images} />
+      {images.length > 0 && !loading && <LoadMoreBtn onClick={handleLoadMore} />}
+      <ImageModal />
       <Toaster />
     </>
   )
