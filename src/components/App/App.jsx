@@ -10,12 +10,16 @@ import ImageModal from "../ImageModal/ImageModal"
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios'
 
+
 export default function App() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
 
   const handleSubmit = (e, input) => {
     e.preventDefault();
@@ -26,6 +30,7 @@ export default function App() {
     setQuery(input);
     setPage(1);
     setImages([]);
+
       };
 
   const fetchSearchedImages = async(query, page) => {
@@ -55,7 +60,19 @@ export default function App() {
 
   const handleLoadMore = () => {
     setPage(prevPage => prevPage + 1);
+    
   };
+
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedImage(null);
+    setIsModalOpen(false);
+  };
+
 
   useEffect(() => {
     if (query) {
@@ -63,15 +80,22 @@ export default function App() {
     }
   }, [page, query]);
 
+  
+
+
+
    return(
     <>
      <SearchBar onSubmit={handleSubmit} />
       {loading && <Loader />}
       {error && <ErrorMassage />}
-      <ImageGallery images={images} />
+      <ImageGallery images={images} onImageClick={openModal}/>
       {images.length > 0 && !loading && <LoadMoreBtn onClick={handleLoadMore} />}
-      <ImageModal />
+      <ImageModal isOpen={isModalOpen} onRequestClose={closeModal} image={selectedImage}/>
       <Toaster />
+
+      
+
     </>
   )
 }
