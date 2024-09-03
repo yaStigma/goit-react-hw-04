@@ -7,7 +7,7 @@ import ErrorMassage from "../ErrorMassage/ErrorMassage"
 import Loader from "../Loader/Loader"
 import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn"
 import ImageModal from "../ImageModal/ImageModal"
-import toast, { Toaster } from 'react-hot-toast';
+
 import axios from 'axios'
 
 
@@ -23,10 +23,6 @@ export default function App() {
 
   const handleSubmit = (e, input) => {
     e.preventDefault();
-    if (!input) {
-      toast("Please enter your search");
-      return;
-    }
     setQuery(input);
     setPage(1);
     setImages([]);
@@ -92,7 +88,7 @@ export default function App() {
       <ImageGallery images={images} onImageClick={openModal}/>
       {images.length > 0 && !loading && <LoadMoreBtn onClick={handleLoadMore} />}
       <ImageModal isOpen={isModalOpen} onRequestClose={closeModal} image={selectedImage}/>
-      <Toaster />
+  
 
       
 
