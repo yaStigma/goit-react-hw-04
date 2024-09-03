@@ -3,7 +3,7 @@ import { useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function SearchBar ({ onSubmit }) {
-  const [input, setInput] = useState();
+  const [input, setInput] = useState( "" );
   
   const handleSubmit = (e) => {
     e.preventDefault();
